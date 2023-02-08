@@ -4,32 +4,57 @@ import java.util.ArrayList;
 
 public class Snake {
     // direction relative to game boards
-    public enum Direction {UP, DOWN, LEFT, RIGHT, NONE};
+    public enum Direction {
+        UP, DOWN, LEFT, RIGHT, NONE;
+        
+        public static boolean areOpposites(Direction d1, Direction d2) {
+            boolean isOpposite = switch (d1) {
+                case UP -> (d2 == Direction.DOWN);
+                case DOWN -> (d2 == Direction.UP);
+                case LEFT -> (d2 == Direction.RIGHT);
+                case RIGHT -> (d2 == Direction.LEFT);
+                default -> false;
+            };
+            return isOpposite;
+        }
+    };
 
     // nested class for snake node
-    class SnakeNode {
+    public static class SnakeNode {
         int xPos, yPos; // position on grid
         Direction direction;
 
         // constructor
-        SnakeNode(int x, int y, Direction direction) {
+        public SnakeNode(int x, int y, Direction direction) {
             this.xPos = x;
             this.yPos = y;
             this.direction = direction;
+        }
+
+        int getX() {
+            return xPos;
+        }
+
+        int getY() {
+            return yPos;
         }
 
     }
 
     // Fields for snake
     private ArrayList<SnakeNode> nodes;
+    private int boardWidth, boardHeight;
 
     // static members
-    static final int START_LENGTH = 3;
+    static final int START_LENGTH = 4;
     static final int MAX_LENGTH = 20;
 
 
     // constructor
-    public Snake(int startX, int startY, Direction startDir) {
+    public Snake(int startX, int startY, Direction startDir, int boardWidth, int boardHeight) {
+
+        this.boardWidth = boardWidth;
+        this.boardHeight = boardHeight;
         nodes = new ArrayList<SnakeNode>(MAX_LENGTH);
 
         // initialize nodes
@@ -40,9 +65,9 @@ public class Snake {
             
             // update position for next node
             if (startDir == Direction.UP)
-                y--; // decrement y by 1
+                y++; // decrement y by 1
             else if (startDir == Direction.DOWN)
-                y++;
+                y--;
             else if (startDir == Direction.LEFT)
                 x++;
             else if (startDir == Direction.RIGHT)
@@ -70,6 +95,33 @@ public class Snake {
         return nodes.get(0).direction;
     }
 
+    public SnakeNode getHead() {
+        return nodes.get(0);
+    }
+
+    public SnakeNode getTail() {
+        return nodes.get(nodes.size() - 1);
+    }
+
+    public int[] getXdirections() {
+        int[] xs = new int[nodes.size()];
+
+        for (int i = 0; i < nodes.size(); i++)
+            xs[i] = nodes.get(i).getX();
+
+        return xs;
+    }
+
+
+    public int[] getYdirections() {
+        int[] ys = new int[nodes.size()];
+
+        for (int i = 0; i < nodes.size(); i++)
+            ys[i] = nodes.get(i).getY();
+
+        return ys;
+    }
+
     // update for new frame
     /**
      * Update position for new frame. This means moving
@@ -90,10 +142,10 @@ public class Snake {
             Direction currentDirection = node.direction;
             switch (currentDirection) {
                 case UP -> {
-                    node.yPos++;
+                    node.yPos--;
                 }
                 case DOWN -> {
-                    node.yPos--;
+                    node.yPos++;
                 }
                 case LEFT -> {
                     node.xPos--;
@@ -149,11 +201,11 @@ public class Snake {
         switch (direction) {
             case UP -> {
                 x = lastNode.xPos;
-                y = lastNode.yPos - 1;
+                y = lastNode.yPos + 1;
             }
             case DOWN -> {
                 x = lastNode.xPos;
-                y = lastNode.yPos + 1;
+                y = lastNode.yPos - 1;
             }
             case LEFT -> {
                 x = lastNode.xPos + 1;
@@ -173,4 +225,26 @@ public class Snake {
         System.out.println("Snake grew.");
         return true;
     }
+
+    /**
+     * Move manually. Intended to be linked to key events.
+     */
+    public void keyMove(Direction keyDirection) {
+        Direction currentDirection = nodes.get(0).direction;
+
+        if (Direction.areOpposites(currentDirection, keyDirection)) {
+            return; // do nothing
+        } else if (currentDirection == keyDirection) {
+            System.out.println("Snake Moved");
+            updatePosForNewFrame();
+        } else {// need to turn
+            changeDirection(keyDirection);
+            updatePosForNewFrame();
+        }
+    }
+
+    public Direction turnNinetyDegreesAtRandom(Direction initDir) {
+        return Direction.NONE;
+    }
+
 }
