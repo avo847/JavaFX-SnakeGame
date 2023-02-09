@@ -75,17 +75,23 @@ public class FoodStuffs {
         return false;
     }
 
-    public boolean isFoodNode(int x, int y) {
+    public FoodNode getFoodNode(int x, int y) {
         if (nodes == null) // no nodes yet
-            return false;
+            return null;
 
         for (FoodNode node : nodes) {
             if (node.matchCoords(x,y))
-                return true;
+                return node;
         }
-        return false;
+        return null;
     }
 
+    public boolean remove(FoodNode f) {
+        return nodes.remove(f);
+    }
 
+    public ArrayList<FoodNode> getFoodList() {
+        return nodes;
+    }
 
 }

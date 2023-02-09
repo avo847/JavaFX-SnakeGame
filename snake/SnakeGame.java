@@ -23,6 +23,7 @@ public class SnakeGame {
     private final static Color BOARD_COLOR = Color.DARKGRAY;
     private final static Color SNAKE_COLOR = Color.GREEN;
     private final static Color SNAKE_HEAD_COLOR = Color.DARKGREEN;
+    private final static Color FOOD_COLOR = Color.YELLOW;
 
     public SnakeGame() {
         board = new MosaicCanvas(ROWS, COLUMNS, SQUARE_SIZE, SQUARE_SIZE);
@@ -30,13 +31,15 @@ public class SnakeGame {
         board.setGroutingColor(null);
 
         snake = new Snake(COLUMNS/2, ROWS/2, Snake.Direction.UP, COLUMNS, ROWS);
-        setSnakeColors();
         snake.testSnake();
 
         foodStuffs = new FoodStuffs(COLUMNS, ROWS);
         foodStuffs.printNodes();
 
         gameSpeed = 8;// squares moved per second
+
+        setBoardColors();// must occur after creating snake
+                         // and foodStuffs
 
         animator = new AnimationTimer(){
             long prevFrameTime;
@@ -58,8 +61,15 @@ public class SnakeGame {
 
     /**
      * Update colors for snake coordinates */
-    public void setSnakeColors() {
+    public void setBoardColors() {
         board.fill(BOARD_COLOR);
+
+        // set food colors
+        for (FoodStuffs.FoodNode node : foodStuffs.getFoodList()) {
+            board.setColor(node.y, node.x, FOOD_COLOR);
+        }
+
+        // set snake colors
         int[] xs = snake.getXdirections();
         int[] ys = snake.getYdirections();
 
@@ -68,6 +78,10 @@ public class SnakeGame {
         for (int i = 1; i < snake.getSize(); i++) {
             board.setColor(ys[i], xs[i], SNAKE_COLOR);
         }
+    }
+
+    public void setFoodColors() {
+
     }
 
     public void keyHandle(KeyEvent evt) {
@@ -143,12 +157,21 @@ public class SnakeGame {
 
         snake.updatePosForNewFrame();// update snake position
         Snake.SnakeNode newHead = snake.getHead();
-
+        
+        // check if food is found
+        FoodStuffs.FoodNode foundFood = foodStuffs.getFoodNode(newHead.getX(), newHead.getY());
+        if (foundFood != null) {
+            snakeConsume(foundFood);
+        }
+        // update board visuals
         board.setColor(newHead.getY(), newHead.getX(), SNAKE_HEAD_COLOR);
         board.setColor(oldHeadY, oldHeadX, SNAKE_COLOR); // snake body color
         board.setColor(oldTailY, oldTailX, BOARD_COLOR);
+    }
 
-
+    public void snakeConsume(FoodStuffs.FoodNode f) {
+        snake.grow();
+        foodStuffs.remove(f);
     }
 
     public void startAnimation() {
