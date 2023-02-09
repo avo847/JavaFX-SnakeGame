@@ -95,6 +95,15 @@ public class Snake {
         return nodes.get(0).direction;
     }
 
+    /**
+     * Set the snake's direction manually. Only for internal
+     * use, specifically for correcting course when running 
+     * into boundary.
+     */
+    private void setSnakeDirection(Direction newDirection) {
+        nodes.get(0).direction = newDirection;
+    }
+
     public SnakeNode getHead() {
         return nodes.get(0);
     }
@@ -135,6 +144,52 @@ public class Snake {
         // need direction of current node, and direction of 
         // one node prior, in order to update appropriately
         Direction leadingDirection = getDirection();// for first node
+        int headX = nodes.get(0).getX();
+        int headY = nodes.get(0).getY();
+
+        switch (leadingDirection) {
+            case UP -> {
+                if (headY == 0) {
+                    if (headX == 0)
+                        setSnakeDirection(Direction.RIGHT);
+                    else if (headX == boardWidth-1)
+                        setSnakeDirection(Direction.LEFT);
+                    else
+                        turnNinetyDegreesAtRandom(leadingDirection);// turn left or right
+                }
+            }
+            case DOWN -> {
+                if (headY == boardHeight-1) {
+                    if (headX == 0)
+                        setSnakeDirection(Direction.RIGHT);
+                    else if (headX == boardWidth-1)
+                        setSnakeDirection(Direction.LEFT);
+                    else
+                        turnNinetyDegreesAtRandom(leadingDirection);// turn left or right
+
+                }
+            }
+            case LEFT -> {
+                if (headX == 0) {
+                    if (headY == 0)
+                        setSnakeDirection(Direction.DOWN);
+                    else if (headY == boardHeight-1)
+                        setSnakeDirection(Direction.UP);
+                    else
+                        turnNinetyDegreesAtRandom(leadingDirection);//turn up or down
+                }
+            }
+            case RIGHT -> {
+                if (headX == boardWidth-1) {
+                    if (headY == 0)
+                        setSnakeDirection(Direction.DOWN);
+                    else if (headY == boardHeight-1)
+                        setSnakeDirection(Direction.UP);
+                    else
+                        turnNinetyDegreesAtRandom(leadingDirection);//turn up or down
+                }
+            }
+        }
 
         for (int i = 0; i < nodes.size(); i++) {
             SnakeNode node = nodes.get(i);
@@ -247,7 +302,12 @@ public class Snake {
     }
 
     public Direction turnNinetyDegreesAtRandom(Direction initDir) {
-        return Direction.NONE;
+        if (initDir == Direction.LEFT || initDir == Direction.RIGHT) //  move up or down
+            return (Math.random() > 0.5) ? Direction.UP : Direction.DOWN;
+        else if (initDir == Direction.UP || initDir == Direction.DOWN)
+            return (Math.random() > 0.5) ? Direction.LEFT : Direction.RIGHT;
+        else
+            return initDir;
     }
 
 }

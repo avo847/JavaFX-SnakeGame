@@ -4,6 +4,7 @@ import snake.SnakeGame;
 import mosaic.MosaicCanvas;
 
 import javafx.application.Application;
+import javafx.animation.AnimationTimer;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
