@@ -228,18 +228,21 @@ public class Snake {
 
     /**
      * Move manually. Intended to be linked to key events.
+     * Returns true if move was successful, and false otherwise.
      */
-    public void keyMove(Direction keyDirection) {
+    public boolean keyMove(Direction keyDirection) {
         Direction currentDirection = nodes.get(0).direction;
 
         if (Direction.areOpposites(currentDirection, keyDirection)) {
-            return; // do nothing
+            return false; // do nothing
         } else if (currentDirection == keyDirection) {
             System.out.println("Snake Moved");
             updatePosForNewFrame();
+            return true;
         } else {// need to turn
             changeDirection(keyDirection);
             updatePosForNewFrame();
+            return true;
         }
     }
 

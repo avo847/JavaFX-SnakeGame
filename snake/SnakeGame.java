@@ -51,18 +51,23 @@ public class SnakeGame {
         KeyCode code = evt.getCode();
 
         Snake.SnakeNode oldTail = snake.getTail();
-        System.out.printf("Tail at (%d,%d)\n", oldTail.getX(), oldTail.getY());
-        switch (code) {
+        int oldTailX = oldTail.getX();
+        int oldTailY = oldTail.getY();
+        System.out.printf("OldTail at (%d,%d)\n", oldTail.getX(), oldTail.getY());
+        boolean moved = switch (code) {
             case UP -> snake.keyMove(Snake.Direction.UP);
             case DOWN -> snake.keyMove(Snake.Direction.DOWN);
             case LEFT -> snake.keyMove(Snake.Direction.LEFT);
             case RIGHT -> snake.keyMove(Snake.Direction.RIGHT);
             case G -> snake.grow();
-        }
-        if (code != KeyCode.G) {
+            default -> false;
+        };
+        if (code != KeyCode.G && moved) {
             Snake.SnakeNode newHead = snake.getHead();
             board.setColor(newHead.getY(), newHead.getX(), SNAKE_COLOR);
-            board.setColor(oldTail.getY(), oldTail.getX(), BOARD_COLOR);
+            System.out.printf("Set y-coord at %d to Green\n", newHead.getY());
+            board.setColor(oldTailY, oldTailX, BOARD_COLOR);
+            System.out.printf("Set y-coord at %d to Board color\n", oldTail.getY());
         }
         //setSnakeColors();
     }
