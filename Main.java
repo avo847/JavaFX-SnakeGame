@@ -45,7 +45,10 @@ public class Main extends Application {
         BorderPane root = new BorderPane(board);
         root.setBottom(buttonBar);
         Scene scene = new Scene(root);
-        scene.setOnKeyPressed(e -> gameInstance.keyTurn(e));
+        scene.setOnKeyPressed(e -> {
+            System.out.println("Keypress registered");
+            gameInstance.keyTurn(e);
+        });
         stage.setScene(scene);
         stage.setResizable(false);
         stage.setTitle("Snake");
@@ -70,9 +73,15 @@ public class Main extends Application {
         resetButton.setOnAction(e -> gameInstance.resetAnimation());
         quitButton.setOnAction(e -> Platform.exit());
 
-        // set initial values
+        // set initial disabled
         stopButton.setDisable(true);
         resetButton.setDisable(true);
+
+        // set focus traversable to false
+        startButton.setFocusTraversable(false);
+        stopButton.setFocusTraversable(false);
+        resetButton.setFocusTraversable(false);
+        quitButton.setFocusTraversable(false);
 
         HBox buttonBar = new HBox(startButton, stopButton, resetButton, quitButton);
 
