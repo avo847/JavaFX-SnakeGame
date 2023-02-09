@@ -28,11 +28,11 @@ public class SnakeGame {
         board.fill(BOARD_COLOR);
         board.setGroutingColor(null);
 
-        snake = new Snake(COLUMNS/2, ROWS/2, Snake.Direction.UP, (int) board.getWidth(), (int) board.getHeight());
+        snake = new Snake(COLUMNS/2, ROWS/2, Snake.Direction.UP, COLUMNS, ROWS);
         setSnakeColors();
         snake.testSnake();
 
-        gameSpeed = 4;// squares moved per second
+        gameSpeed = 8;// squares moved per second
 
         animator = new AnimationTimer(){
             long prevFrameTime;
@@ -91,6 +91,41 @@ public class SnakeGame {
             board.setColor(oldTailY, oldTailX, BOARD_COLOR);
         }
         //setSnakeColors();
+    }
+
+    public void keyTurn(KeyEvent evt) {
+        KeyCode code = evt.getCode();
+        Snake.Direction currentDirection = snake.getDirection();
+
+        Snake.SnakeNode oldHead = snake.getHead();
+        int oldHeadX = oldHead.getX();
+        int oldHeadY = oldHead.getY();
+        switch (code) {
+            case UP -> {
+                if ((currentDirection == Snake.Direction.LEFT
+                    || currentDirection == Snake.Direction.RIGHT)
+                        && oldHeadY != 0)
+                    snake.setSnakeDirection(Snake.Direction.UP);
+            }
+            case DOWN -> {
+                if ((currentDirection == Snake.Direction.LEFT
+                    || currentDirection == Snake.Direction.RIGHT)
+                        && oldHeadY != ROWS-1)
+                    snake.setSnakeDirection(Snake.Direction.DOWN);
+            }
+            case LEFT -> {
+                if ((currentDirection == Snake.Direction.UP
+                    || currentDirection == Snake.Direction.DOWN)
+                        && oldHeadX != 0)
+                    snake.setSnakeDirection(Snake.Direction.LEFT);
+            }
+            case RIGHT -> {
+                if ((currentDirection == Snake.Direction.UP
+                    || currentDirection == Snake.Direction.DOWN)
+                        && oldHeadX != COLUMNS-1)
+                    snake.setSnakeDirection(Snake.Direction.RIGHT);
+            }
+        }
     }
 
     public void updateForNewFrame() {

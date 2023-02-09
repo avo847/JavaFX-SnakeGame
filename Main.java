@@ -57,7 +57,7 @@ public class Main extends Application {
 
         BorderPane root = new BorderPane(board);
         Scene scene = new Scene(root);
-        scene.setOnKeyPressed(e -> gameInstance.keyHandle(e));
+        scene.setOnKeyPressed(e -> gameInstance.keyTurn(e));
         stage.setScene(scene);
         stage.setResizable(false);
         stage.setTitle("Snake");
