@@ -1,5 +1,6 @@
 import snake.Snake;
 import snake.SnakeGame;
+import snake.FoodStuffs;
 
 import mosaic.MosaicCanvas;
 

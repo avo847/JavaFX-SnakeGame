@@ -11,6 +11,7 @@ public class SnakeGame {
     // fields 
     private MosaicCanvas board;
     private Snake snake;
+    private FoodStuffs foodStuffs;
     private AnimationTimer animator;
 
     private int gameSpeed;
@@ -31,6 +32,9 @@ public class SnakeGame {
         snake = new Snake(COLUMNS/2, ROWS/2, Snake.Direction.UP, COLUMNS, ROWS);
         setSnakeColors();
         snake.testSnake();
+
+        foodStuffs = new FoodStuffs(COLUMNS, ROWS);
+        foodStuffs.printNodes();
 
         gameSpeed = 8;// squares moved per second
 
