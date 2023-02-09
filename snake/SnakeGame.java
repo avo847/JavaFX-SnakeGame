@@ -182,4 +182,8 @@ public class SnakeGame {
         animator.stop();
     }
 
+    public void resetAnimation() {
+
+    }
+
 }
