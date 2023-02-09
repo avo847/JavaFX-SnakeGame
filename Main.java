@@ -54,6 +54,7 @@ public class Main extends Application {
         board = gameInstance.getBoard();
 
 
+
         BorderPane root = new BorderPane(board);
         Scene scene = new Scene(root);
         scene.setOnKeyPressed(e -> gameInstance.keyHandle(e));
@@ -61,5 +62,6 @@ public class Main extends Application {
         stage.setResizable(false);
         stage.setTitle("Snake");
         stage.show();
+        gameInstance.startAnimation();
     }
 }

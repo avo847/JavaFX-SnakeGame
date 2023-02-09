@@ -2,6 +2,7 @@ package snake;
 
 import mosaic.MosaicCanvas;
 
+import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -11,6 +12,8 @@ public class SnakeGame {
     private MosaicCanvas board;
     private Snake snake;
     private AnimationTimer animator;
+
+    private int gameSpeed;
 
 
     private final static int ROWS = 40; // rows in the mosaic
@@ -29,10 +32,19 @@ public class SnakeGame {
         setSnakeColors();
         snake.testSnake();
 
+        gameSpeed = 4;// squares moved per second
+
         animator = new AnimationTimer(){
             long prevFrameTime;
-            int frameNumber;
-        }
+        
+
+            public void handle(long time) {
+                if (time - prevFrameTime > 0.99e9/gameSpeed) {// 1 fps
+                    updateForNewFrame();
+                    prevFrameTime = time;
+                }
+            }
+        };
 
     }
 
@@ -76,9 +88,7 @@ public class SnakeGame {
             Snake.SnakeNode newHead = snake.getHead();
             board.setColor(newHead.getY(), newHead.getX(), SNAKE_HEAD_COLOR);
             board.setColor(oldHeadY, oldHeadX, SNAKE_COLOR); // snake body color
-            System.out.printf("Set y-coord at %d to Green\n", newHead.getY());
             board.setColor(oldTailY, oldTailX, BOARD_COLOR);
-            System.out.printf("Set y-coord at %d to Board color\n", oldTail.getY());
         }
         //setSnakeColors();
     }
@@ -86,14 +96,28 @@ public class SnakeGame {
     public void updateForNewFrame() {
         // save tail position of snake
         Snake.SnakeNode oldTail = snake.getTail();
+        Snake.SnakeNode oldHead = snake.getHead();
+        int oldTailX = oldTail.getX();
+        int oldTailY = oldTail.getY();
+        int oldHeadX = oldHead.getX();
+        int oldHeadY = oldHead.getY();
 
         snake.updatePosForNewFrame();// update snake position
         Snake.SnakeNode newHead = snake.getHead();
 
-        board.setColor(newHead.getY(), newHead.getX(), SNAKE_COLOR);
-        board.setColor(oldTail.getY(), oldTail.getX(), BOARD_COLOR);
+        board.setColor(newHead.getY(), newHead.getX(), SNAKE_HEAD_COLOR);
+        board.setColor(oldHeadY, oldHeadX, SNAKE_COLOR); // snake body color
+        board.setColor(oldTailY, oldTailX, BOARD_COLOR);
 
 
+    }
+
+    public void startAnimation() {
+        animator.start();
+    }
+
+    public void stopAnimation() {
+        animator.stop();
     }
 
 }
