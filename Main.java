@@ -33,6 +33,8 @@ public class Main extends Application {
     // fields
     private SnakeGame gameInstance;
     private MosaicCanvas board;
+    private Scene scene;
+    private BorderPane root;
 
     public void start(Stage stage) {
 
@@ -42,9 +44,10 @@ public class Main extends Application {
 
         HBox buttonBar = setUpButtonBar();
 
-        BorderPane root = new BorderPane(board);
+        root = new BorderPane(board);
         root.setBottom(buttonBar);
-        Scene scene = new Scene(root);
+
+        scene = new Scene(root);
         scene.setOnKeyPressed(e -> {
             System.out.println("Keypress registered");
             gameInstance.keyTurn(e);
@@ -70,12 +73,18 @@ public class Main extends Application {
             startButton.setDisable(false);
             stopButton.setDisable(true);
         });
-        resetButton.setOnAction(e -> gameInstance.resetAnimation());
+        resetButton.setOnAction(e -> {
+            gameInstance.stopAnimation();
+            gameInstance = new SnakeGame();
+            board = gameInstance.getBoard();
+            root.setCenter(board);
+            startButton.setDisable(false);// initialize in paused state
+            stopButton.setDisable(true);
+        });
         quitButton.setOnAction(e -> Platform.exit());
 
         // set initial disabled
         stopButton.setDisable(true);
-        resetButton.setDisable(true);
 
         // set focus traversable to false
         startButton.setFocusTraversable(false);

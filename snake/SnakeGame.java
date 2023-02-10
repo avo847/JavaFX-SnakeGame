@@ -15,6 +15,7 @@ public class SnakeGame {
     private AnimationTimer animator;
 
     private int gameSpeed;
+    private boolean isRunning;
 
 
     private final static int ROWS = 40; // rows in the mosaic
@@ -175,10 +176,12 @@ public class SnakeGame {
     }
 
     public void startAnimation() {
+        isRunning = true;
         animator.start();
     }
 
     public void stopAnimation() {
+        isRunning = false;
         animator.stop();
     }
 
