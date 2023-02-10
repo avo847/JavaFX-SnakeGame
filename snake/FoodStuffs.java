@@ -94,4 +94,8 @@ public class FoodStuffs {
         return nodes;
     }
 
+    public boolean gotAllFood() {
+        return nodes.size() == 0;
+    }
+
 }

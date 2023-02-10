@@ -39,6 +39,14 @@ public class Snake {
             return yPos;
         }
 
+        /**
+          * For checking if snake has come into contact
+          * with itself.
+         */
+        public boolean hasSameLocation(SnakeNode s) {
+            return this.xPos == s.getX() && this.yPos == s.getY();
+        }
+
     }
 
     // Fields for snake
@@ -304,6 +312,11 @@ public class Snake {
         }
     }
 
+    /**
+     * Turn 90 degrees from current direction at random (roughly
+     * equal odds each way). For use when snake runs into a wall
+     * head-on, but not a corner.
+     */
     public Direction turnNinetyDegreesAtRandom(Direction initDir) {
         if (initDir == Direction.LEFT || initDir == Direction.RIGHT) //  move up or down
             return (Math.random() > 0.5) ? Direction.UP : Direction.DOWN;
@@ -311,6 +324,19 @@ public class Snake {
             return (Math.random() > 0.5) ? Direction.LEFT : Direction.RIGHT;
         else
             return initDir;
+    }
+
+    /**
+     * For checking whether snake has run into itself.
+     */
+    public boolean hasRunIntoSelf() {
+        SnakeNode headNode = getHead();
+
+        for (int i = 1; i < nodes.size(); i++) {
+            if (headNode.hasSameLocation(nodes.get(i)))
+                return true;
+        }
+        return false;
     }
 
 }

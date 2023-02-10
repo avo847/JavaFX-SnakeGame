@@ -16,6 +16,7 @@ public class SnakeGame {
 
     private int gameSpeed;
     private boolean isRunning;
+    private boolean isGameOver;
 
 
     private final static int ROWS = 40; // rows in the mosaic
@@ -157,17 +158,24 @@ public class SnakeGame {
         int oldHeadY = oldHead.getY();
 
         snake.updatePosForNewFrame();// update snake position
+        
         Snake.SnakeNode newHead = snake.getHead();
         
         // check if food is found
         FoodStuffs.FoodNode foundFood = foodStuffs.getFoodNode(newHead.getX(), newHead.getY());
         if (foundFood != null) {
             snakeConsume(foundFood);
+            if (foodStuffs.gotAllFood())
+                initGameWonSequence();
         }
         // update board visuals
         board.setColor(newHead.getY(), newHead.getX(), SNAKE_HEAD_COLOR);
         board.setColor(oldHeadY, oldHeadX, SNAKE_COLOR); // snake body color
         board.setColor(oldTailY, oldTailX, BOARD_COLOR);
+        
+        // check if run into self
+        if (snake.hasRunIntoSelf())
+            initGameLostSequence();// end the game
     }
 
     public void snakeConsume(FoodStuffs.FoodNode f) {
@@ -176,17 +184,31 @@ public class SnakeGame {
     }
 
     public void startAnimation() {
-        isRunning = true;
-        animator.start();
+        if (!isGameOver && ! isRunning) {
+            isRunning = true;
+            animator.start();
+        }
     }
 
     public void stopAnimation() {
-        isRunning = false;
-        animator.stop();
+        if (isRunning){
+            isRunning = false;
+            animator.stop();
+        }
     }
 
-    public void resetAnimation() {
+    public void initGameLostSequence() {
+        animator.stop();
+        isRunning = false;
+        isGameOver = true;
+        System.out.println("Snake has died. Game Over!");
+    }
 
+    public void initGameWonSequence() {
+        animator.stop();
+        isRunning = false;
+        isGameOver = true;
+        System.out.println("Snake got all food. You win!");
     }
 
 }
