@@ -4,11 +4,15 @@ import snake.FoodStuffs;
 
 import mosaic.MosaicCanvas;
 
+import java.util.List;
+import java.util.HashMap;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.animation.AnimationTimer;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -44,6 +48,7 @@ public class Main extends Application {
     private Button nextLevelButton;
     private Button retryButton;
     private Button quitButton; 
+    HashMap<String,Button> buttonMap;
 
     private int level;
     private int livesRemaining = 3;
@@ -54,12 +59,18 @@ public class Main extends Application {
     public void start(Stage stage) {
 
         HBox buttonBar = setUpButtonBar();
+        buttonMap = new HashMap<String, Button>();
+        buttonMap.put("start", startButton);
+        buttonMap.put("pause", pauseButton);
+        buttonMap.put("nextLevel", nextLevelButton);
+        buttonMap.put("retry", retryButton);
+        buttonMap.put("quit", quitButton);
+
         // set up scene:
         level = 1;
         livesRemaining = 3;
-        gameInstance = new SnakeGame(level, nextLevelButton);
+        gameInstance = new SnakeGame(level, buttonMap);
         board = gameInstance.getBoard();
-
         
         GridPane displayBar = setUpDisplayBar();
 
@@ -96,7 +107,7 @@ public class Main extends Application {
             pauseButton.setDisable(true);
         });
         nextLevelButton.setOnAction(e -> {
-            gameInstance = new SnakeGame(++level, nextLevelButton);
+            gameInstance = new SnakeGame(++level, buttonMap);
             board = gameInstance.getBoard();
             root.setCenter(board);
             updateLabels();
@@ -108,12 +119,12 @@ public class Main extends Application {
             if (gameInstance.gameStatus == SnakeGame.GameStatus.LOST
                 && livesRemaining > 0){
                 livesRemaining--;
-                System.out.println("Lives remaining: " + livesRemaining);
                 updateLabels();
             }
-            gameInstance = new SnakeGame(level, nextLevelButton);
+            gameInstance = new SnakeGame(level, buttonMap);
             board = gameInstance.getBoard();
             root.setCenter(board);
+            retryButton.setDisable(true);
             startButton.setDisable(false);// initialize in paused state
             pauseButton.setDisable(true);
         });
@@ -122,6 +133,7 @@ public class Main extends Application {
         // set initial disabled
         pauseButton.setDisable(true);
         nextLevelButton.setDisable(true);
+        retryButton.setDisable(true);
 
         // set focus traversable to false
         startButton.setFocusTraversable(false);

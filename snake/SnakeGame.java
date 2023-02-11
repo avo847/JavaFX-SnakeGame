@@ -2,6 +2,8 @@ package snake;
 
 import mosaic.MosaicCanvas;
 
+import java.util.HashMap;
+
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -30,7 +32,14 @@ public class SnakeGame {
     private int framesPerUpdate;
 
     private Object boardColorData;
+
+    //private HashMap<String,Button> buttonMap;
+    // same buttons defined in Main.java
+    // used to enable/disable when game won or lost
+    private Button startButton;
+    private Button pauseButton;
     private Button nextLevelButton;
+    private Button retryButton;
 
     private final static int ROWS = 40; // rows in the mosaic
     private final static int COLUMNS = 40; 
@@ -41,12 +50,16 @@ public class SnakeGame {
     private final static Color FOOD_COLOR = Color.YELLOW;
     private final static int MAX_LEVEL = 5;
 
-    public SnakeGame(int level, Button nextLevelButton) {
+    public SnakeGame(int level, HashMap<String,Button> buttonMap) {
         board = new MosaicCanvas(ROWS, COLUMNS, SQUARE_SIZE, SQUARE_SIZE);
         this.level = (level > 0) ? level : 1;
         board.fill(BOARD_COLOR);
         board.setGroutingColor(null);
-        this.nextLevelButton = nextLevelButton;
+
+        this.startButton = buttonMap.get("start");
+        this.pauseButton = buttonMap.get("pause");
+        this.nextLevelButton = buttonMap.get("nextLevel");
+        this.retryButton = buttonMap.get("retry");
 
         snake = new Snake(COLUMNS/2, ROWS/2, Snake.Direction.UP, COLUMNS, ROWS);
 
@@ -243,14 +256,19 @@ public class SnakeGame {
 
     public void initGameLostSequence() {
         animator.stop();
+        startButton.setDisable(true);
+        pauseButton.setDisable(true);
         isRunning = false;
         isGameOver = true;
         gameStatus = GameStatus.LOST;
         setDeathMessage();
+        retryButton.setDisable(false);
     }
 
     public void initGameWonSequence() {
         animator.stop();
+        startButton.setDisable(true);
+        pauseButton.setDisable(true);
         isRunning = false;
         isGameOver = false;
         gameStatus = GameStatus.WON;
