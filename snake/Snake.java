@@ -63,7 +63,6 @@ public class Snake {
 
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
-        System.out.println("Width and height: " + boardWidth + " " + boardHeight);
         nodes = new ArrayList<SnakeNode>(MAX_LENGTH);
 
         // initialize nodes

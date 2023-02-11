@@ -49,10 +49,8 @@ public class SnakeGame {
         this.nextLevelButton = nextLevelButton;
 
         snake = new Snake(COLUMNS/2, ROWS/2, Snake.Direction.UP, COLUMNS, ROWS);
-        snake.testSnake();
 
         foodStuffs = new FoodStuffs(COLUMNS, ROWS, 5*level);
-        foodStuffs.printNodes();
 
         //gameSpeed = 8;// squares moved per second
         //gameSpeed = 60 + 13 * (level - 5);
@@ -131,7 +129,7 @@ public class SnakeGame {
         int oldTailY = oldTail.getY();
         int oldHeadX = oldHead.getX();
         int oldHeadY = oldHead.getY();
-        System.out.printf("OldTail at (%d,%d)\n", oldTail.getX(), oldTail.getY());
+
         boolean moved = switch (code) {
             case UP -> snake.keyMove(Snake.Direction.UP);
             case DOWN -> snake.keyMove(Snake.Direction.DOWN);
@@ -150,6 +148,11 @@ public class SnakeGame {
     }
 
     public void keyTurn(KeyEvent evt) {
+
+        if (gameStatus != GameStatus.RUNNING)
+            return;
+        
+        System.out.println("Keypress registered");
         KeyCode code = evt.getCode();
         Snake.Direction currentDirection = snake.getDirection();
 
@@ -223,6 +226,7 @@ public class SnakeGame {
     public void startAnimation() {
         if (!isGameOver && ! isRunning) {
             isRunning = true;
+            gameStatus = GameStatus.RUNNING;
             board.restoreColorData(boardColorData);
             setFoodColors();
             animator.start();
@@ -242,7 +246,6 @@ public class SnakeGame {
         isRunning = false;
         isGameOver = true;
         gameStatus = GameStatus.LOST;
-        System.out.println("Snake has died. Game Over!");
         setDeathMessage();
     }
 
@@ -251,7 +254,6 @@ public class SnakeGame {
         isRunning = false;
         isGameOver = false;
         gameStatus = GameStatus.WON;
-        System.out.println("Snake got all food. You win!");
         if (level < 5) {// still have more levels to go
             setLevelWonMessage();
             nextLevelButton.setDisable(false);

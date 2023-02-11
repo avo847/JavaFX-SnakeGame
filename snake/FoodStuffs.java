@@ -65,7 +65,6 @@ public class FoodStuffs {
             x = (int) (boardWidth * Math.random());
             y = (int) (boardHeight * Math.random());
         } while (nodePresent(x,y));
-        System.out.printf("New random node at (%d,%d)\n", x, y);
 
         return new FoodNode(x,y);
     }
