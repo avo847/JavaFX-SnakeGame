@@ -288,7 +288,6 @@ public class Snake {
         }
 
         nodes.add(new SnakeNode(x, y, direction));
-        System.out.println("Snake grew.");
         return true;
     }
 

@@ -23,6 +23,8 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -51,7 +53,8 @@ public class Main extends Application {
     HashMap<String,Button> buttonMap;
 
     private int level;
-    private int livesRemaining = 3;
+    private static final int INIT_LIVES = 3;
+    private int livesRemaining = INIT_LIVES;
 
     private Label levelLabel;
     private Label livesLabel;
@@ -69,7 +72,7 @@ public class Main extends Application {
         // set up scene:
         level = 1;
         livesRemaining = 3;
-        gameInstance = new SnakeGame(level, buttonMap);
+        gameInstance = new SnakeGame(level, livesRemaining, buttonMap);
         board = gameInstance.getBoard();
         
         GridPane displayBar = setUpDisplayBar();
@@ -82,7 +85,18 @@ public class Main extends Application {
 
         scene = new Scene(root);
         scene.setOnKeyPressed(e -> {
-            gameInstance.keyTurn(e);
+            if (e.getCode() == KeyCode.SPACE) {
+                if (gameInstance.gameStatus == SnakeGame.GameStatus.RUNNING && !pauseButton.isDisabled())
+                    pauseButton.fire();//pause
+                else if(gameInstance.gameStatus == SnakeGame.GameStatus.PAUSED && !startButton.isDisabled())
+                    startButton.fire();
+                else if(gameInstance.gameStatus == SnakeGame.GameStatus.LOST && !retryButton.isDisabled())
+                    retryButton.fire();
+                else if(gameInstance.gameStatus == SnakeGame.GameStatus.WON && !nextLevelButton.isDisabled())
+                    nextLevelButton.fire();
+            }else {
+                gameInstance.keyTurn(e);
+            }
         });
         stage.setScene(scene);
         stage.setResizable(false);
@@ -98,16 +112,18 @@ public class Main extends Application {
         quitButton = new Button("QUIT");
         startButton.setOnAction(e -> {
             gameInstance.startAnimation();
+            gameInstance.setGameStatus(SnakeGame.GameStatus.RUNNING);
             startButton.setDisable(true);
             pauseButton.setDisable(false);
         });
         pauseButton.setOnAction(e -> {
             gameInstance.stopAnimation();
+            gameInstance.setGameStatus(SnakeGame.GameStatus.PAUSED);
             startButton.setDisable(false);
             pauseButton.setDisable(true);
         });
         nextLevelButton.setOnAction(e -> {
-            gameInstance = new SnakeGame(++level, buttonMap);
+            gameInstance = new SnakeGame(++level, livesRemaining, buttonMap);
             board = gameInstance.getBoard();
             root.setCenter(board);
             updateLabels();
@@ -116,12 +132,16 @@ public class Main extends Application {
             nextLevelButton.setDisable(true);
         });
         retryButton.setOnAction(e -> {
-            if (gameInstance.gameStatus == SnakeGame.GameStatus.LOST
-                && livesRemaining > 0){
+            System.out.println("Retrying from " + livesRemaining + " lives");
+            if (livesRemaining > 0){
                 livesRemaining--;
-                updateLabels();
+            } else {// start from level 1
+                livesRemaining = INIT_LIVES;
+                level = 1;
+                retryButton.setText("RETRY"); // revert text
             }
-            gameInstance = new SnakeGame(level, buttonMap);
+            updateLabels();
+            gameInstance = new SnakeGame(level, livesRemaining, buttonMap);
             board = gameInstance.getBoard();
             root.setCenter(board);
             retryButton.setDisable(true);

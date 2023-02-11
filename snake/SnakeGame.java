@@ -25,6 +25,8 @@ public class SnakeGame {
 
     private String splashScreenMessage;
     private int level;
+    private int livesRemaining;
+
     private int gameSpeed;
     private boolean isRunning;
     private boolean isGameOver;
@@ -50,9 +52,11 @@ public class SnakeGame {
     private final static Color FOOD_COLOR = Color.YELLOW;
     private final static int MAX_LEVEL = 5;
 
-    public SnakeGame(int level, HashMap<String,Button> buttonMap) {
+    public SnakeGame(int level, int lives, HashMap<String,Button> buttonMap) {
         board = new MosaicCanvas(ROWS, COLUMNS, SQUARE_SIZE, SQUARE_SIZE);
         this.level = (level > 0) ? level : 1;
+        this.livesRemaining = lives;
+
         board.fill(BOARD_COLOR);
         board.setGroutingColor(null);
 
@@ -165,7 +169,6 @@ public class SnakeGame {
         if (gameStatus != GameStatus.RUNNING)
             return;
         
-        System.out.println("Keypress registered");
         KeyCode code = evt.getCode();
         Snake.Direction currentDirection = snake.getDirection();
 
@@ -239,7 +242,7 @@ public class SnakeGame {
     public void startAnimation() {
         if (!isGameOver && ! isRunning) {
             isRunning = true;
-            gameStatus = GameStatus.RUNNING;
+            //gameStatus = GameStatus.RUNNING;
             board.restoreColorData(boardColorData);
             setFoodColors();
             animator.start();
@@ -261,7 +264,12 @@ public class SnakeGame {
         isRunning = false;
         isGameOver = true;
         gameStatus = GameStatus.LOST;
-        setDeathMessage();
+        if (livesRemaining > 0) {
+            setDeathMessage();
+        }else {
+            setGameOverMessage();
+            retryButton.setText("NEW GAME");
+        }
         retryButton.setDisable(false);
     }
 
@@ -285,27 +293,29 @@ public class SnakeGame {
 
         GraphicsContext g = board.getGraphicsContext2D();
         g.setFill(Color.BLUE);
-        g.setFont(new Font(40));
+        g.setFont(new Font(36));
         g.setTextAlign(TextAlignment.CENTER);
         g.fillText(text, 
                    board.getWidth()/2, board.getHeight()/2);
-
     }
+
+
     public void setSplashScreenText() {
-        splashScreenMessage = "Press START to start!";
+        splashScreenMessage = "Click START or Press SPACE to start!";
         splashScreenMessage += "\nLevel " + level;
         splashScreenMessage += "\nBeat all 5 levels to win!";
         setScreenText(splashScreenMessage);
     }
 
     public void setPausedText() {
-        setScreenText("Game Paused.\nPress START to continue");
+        setScreenText("Game Paused.\nClick START or Press SPACE to continue");
+         
     }
 
     public void setDeathMessage() {
         String text = "Snake has died from eating itself";
         text += "\nSorry, you lose.";
-        text += "\nPress Reset to start again.";
+        text += "\nPress RETRY to try this level again.";
         setScreenText(text);
     }
 
@@ -320,6 +330,18 @@ public class SnakeGame {
         String text = "Snake got all food.";
         text += "\nCongratulations. You won the game!";
         text += "\nNow go play outside for a bit.";
+        setScreenText(text);
+    }
+
+    public void setGameOverMessage() {
+        String text = "Snake has died from eating itself.";
+        text += "\nNo lives remaining";
+        text += "\nGame Over";
+        setScreenText(text);
+    }
+
+    public void setGameStatus(GameStatus status) {
+        gameStatus = status;
     }
 
 }
