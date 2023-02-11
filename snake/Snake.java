@@ -55,7 +55,7 @@ public class Snake {
 
     // static members
     static final int START_LENGTH = 4;
-    static final int MAX_LENGTH = 50;
+    static final int MAX_LENGTH = 100;
 
 
     // constructor

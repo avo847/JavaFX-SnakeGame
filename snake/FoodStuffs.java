@@ -11,10 +11,12 @@ public class FoodStuffs {
     // nested class
     public static class FoodNode {
         public int x, y;
+        public int value; // how much food this counts for
 
         public FoodNode(int x, int y) {
             this.x = x;
             this.y = y;
+            value = (int) (3*Math.random())+1;
         }
 
         boolean equals(FoodNode f) {

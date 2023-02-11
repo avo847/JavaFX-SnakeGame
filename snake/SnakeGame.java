@@ -97,9 +97,7 @@ public class SnakeGame {
         board.fill(BOARD_COLOR);
 
         // set food colors
-        for (FoodStuffs.FoodNode node : foodStuffs.getFoodList()) {
-            board.setColor(node.y, node.x, FOOD_COLOR);
-        }
+        setFoodColors();
 
         // set snake colors
         int[] xs = snake.getXdirections();
@@ -113,7 +111,15 @@ public class SnakeGame {
     }
 
     public void setFoodColors() {
-
+        GraphicsContext g = board.getGraphicsContext2D();
+        g.setFont(new Font(15));
+        g.setTextAlign(TextAlignment.CENTER);
+        for (FoodStuffs.FoodNode node : foodStuffs.getFoodList()) {
+            board.setColor(node.y, node.x, FOOD_COLOR);
+            String num = "" + node.value;
+            g.setFill(Color.BLACK);
+            g.fillText(num, node.x*SQUARE_SIZE + SQUARE_SIZE*0.5, node.y*SQUARE_SIZE+SQUARE_SIZE*0.8); 
+        }
     }
 
     public void keyHandle(KeyEvent evt) {
@@ -209,7 +215,8 @@ public class SnakeGame {
     }
 
     public void snakeConsume(FoodStuffs.FoodNode f) {
-        snake.grow();
+        for (int i = 0; i < f.value; i++)
+            snake.grow(); // grow() f.value times
         foodStuffs.remove(f);
     }
 
@@ -217,6 +224,7 @@ public class SnakeGame {
         if (!isGameOver && ! isRunning) {
             isRunning = true;
             board.restoreColorData(boardColorData);
+            setFoodColors();
             animator.start();
         }
     }
