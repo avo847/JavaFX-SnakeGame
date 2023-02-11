@@ -31,16 +31,20 @@ public class FoodStuffs {
 
     private int boardWidth;// should probably change to cols and rows
     private int boardHeight;
+    private int startNumber;
 
     private ArrayList<FoodNode> nodes;
 
-    public FoodStuffs(int boardWidth, int boardHeight) {
+    public FoodStuffs(int boardWidth, int boardHeight, int startNumber) {
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
+        this.startNumber = startNumber;
 
-        nodes = new ArrayList<FoodNode>(INIT_NUMBER);
+        if (startNumber < 1)
+            startNumber = INIT_NUMBER;
+        nodes = new ArrayList<FoodNode>(startNumber);
 
-        for (int i = 0; i < INIT_NUMBER; i++) {
+        for (int i = 0; i < startNumber; i++) {
             nodes.add(newRandomNode());
         }
     }

@@ -5,6 +5,7 @@ import mosaic.MosaicCanvas;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -12,6 +13,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 public class SnakeGame {
+
+    public enum GameStatus {RUNNING, PAUSED, WON, LOST};
     // fields 
     private MosaicCanvas board;
     private Snake snake;
@@ -23,8 +26,11 @@ public class SnakeGame {
     private int gameSpeed;
     private boolean isRunning;
     private boolean isGameOver;
+    public GameStatus gameStatus;
     private int framesPerUpdate;
+
     private Object boardColorData;
+    private Button nextLevelButton;
 
     private final static int ROWS = 40; // rows in the mosaic
     private final static int COLUMNS = 40; 
@@ -35,16 +41,17 @@ public class SnakeGame {
     private final static Color FOOD_COLOR = Color.YELLOW;
     private final static int MAX_LEVEL = 5;
 
-    public SnakeGame(int level) {
+    public SnakeGame(int level, Button nextLevelButton) {
         board = new MosaicCanvas(ROWS, COLUMNS, SQUARE_SIZE, SQUARE_SIZE);
         this.level = (level > 0) ? level : 1;
         board.fill(BOARD_COLOR);
         board.setGroutingColor(null);
+        this.nextLevelButton = nextLevelButton;
 
         snake = new Snake(COLUMNS/2, ROWS/2, Snake.Direction.UP, COLUMNS, ROWS);
         snake.testSnake();
 
-        foodStuffs = new FoodStuffs(COLUMNS, ROWS);
+        foodStuffs = new FoodStuffs(COLUMNS, ROWS, 5*level);
         foodStuffs.printNodes();
 
         //gameSpeed = 8;// squares moved per second
@@ -55,7 +62,7 @@ public class SnakeGame {
             case 3 -> 15;
             case 4 -> 25;
             case 5 -> 45;
-            default -> 8;
+            default -> 60;
         };
         framesPerUpdate = MAX_LEVEL + 1 - level;
 
@@ -63,6 +70,7 @@ public class SnakeGame {
                          // and foodStuffs
 
         setSplashScreenText();
+        gameStatus = GameStatus.PAUSED; // initially paused
 
         animator = new AnimationTimer(){
             long prevFrameTime;
@@ -225,14 +233,23 @@ public class SnakeGame {
         animator.stop();
         isRunning = false;
         isGameOver = true;
+        gameStatus = GameStatus.LOST;
         System.out.println("Snake has died. Game Over!");
+        setDeathMessage();
     }
 
     public void initGameWonSequence() {
         animator.stop();
         isRunning = false;
-        isGameOver = true;
+        isGameOver = false;
+        gameStatus = GameStatus.WON;
         System.out.println("Snake got all food. You win!");
+        if (level < 5) {// still have more levels to go
+            setLevelWonMessage();
+            nextLevelButton.setDisable(false);
+        }else {
+            setGameWonMessage();
+        }
     }
 
     public void setScreenText(String text) {
@@ -249,11 +266,32 @@ public class SnakeGame {
     public void setSplashScreenText() {
         splashScreenMessage = "Press START to start!";
         splashScreenMessage += "\nLevel " + level;
+        splashScreenMessage += "\nBeat all 5 levels to win!";
         setScreenText(splashScreenMessage);
     }
 
     public void setPausedText() {
         setScreenText("Game Paused.\nPress START to continue");
+    }
+
+    public void setDeathMessage() {
+        String text = "Snake has died from eating itself";
+        text += "\nSorry, you lose.";
+        text += "\nPress Reset to start again.";
+        setScreenText(text);
+    }
+
+    public void setLevelWonMessage() {
+        String text = "Snake got all food.";
+        text += "\nYou win this level!";
+        text += "\n Press NEXT LEVEL to advance.";
+        setScreenText(text);
+    }
+
+    public void setGameWonMessage() {
+        String text = "Snake got all food.";
+        text += "\nCongratulations. You won the game!";
+        text += "\nNow go play outside for a bit.";
     }
 
 }

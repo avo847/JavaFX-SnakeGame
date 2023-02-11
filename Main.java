@@ -38,6 +38,7 @@ public class Main extends Application {
 
     private Button startButton;
     private Button pauseButton;
+    private Button nextLevelButton;
     private Button resetButton;
     private Button quitButton; 
 
@@ -45,12 +46,12 @@ public class Main extends Application {
 
     public void start(Stage stage) {
 
+        HBox buttonBar = setUpButtonBar();
         // set up scene:
         level = 1;
-        gameInstance = new SnakeGame(level);
+        gameInstance = new SnakeGame(level, nextLevelButton);
         board = gameInstance.getBoard();
 
-        HBox buttonBar = setUpButtonBar();
 
         root = new BorderPane(board);
         root.setBottom(buttonBar);
@@ -69,6 +70,7 @@ public class Main extends Application {
     public HBox setUpButtonBar() {
         startButton = new Button("START");
         pauseButton = new Button("PAUSE");
+        nextLevelButton = new Button("NEXT LEVEL");
         resetButton = new Button("RESET");
         quitButton = new Button("QUIT");
         startButton.setOnAction(e -> {
@@ -81,9 +83,17 @@ public class Main extends Application {
             startButton.setDisable(false);
             pauseButton.setDisable(true);
         });
+        nextLevelButton.setOnAction(e -> {
+            gameInstance = new SnakeGame(++level, nextLevelButton);
+            board = gameInstance.getBoard();
+            root.setCenter(board);
+            pauseButton.setDisable(true);
+            startButton.setDisable(false);
+            nextLevelButton.setDisable(true);
+        });
         resetButton.setOnAction(e -> {
             gameInstance.stopAnimation();
-            gameInstance = new SnakeGame(1);
+            gameInstance = new SnakeGame(1, nextLevelButton);
             board = gameInstance.getBoard();
             root.setCenter(board);
             startButton.setDisable(false);// initialize in paused state
@@ -93,21 +103,25 @@ public class Main extends Application {
 
         // set initial disabled
         pauseButton.setDisable(true);
+        nextLevelButton.setDisable(true);
 
         // set focus traversable to false
         startButton.setFocusTraversable(false);
         pauseButton.setFocusTraversable(false);
+        nextLevelButton.setFocusTraversable(false);
         resetButton.setFocusTraversable(false);
         quitButton.setFocusTraversable(false);
 
-        HBox buttonBar = new HBox(startButton, pauseButton, resetButton, quitButton);
+        HBox buttonBar = new HBox(startButton, pauseButton, nextLevelButton, resetButton, quitButton);
 
         HBox.setHgrow(startButton, Priority.ALWAYS);
         HBox.setHgrow(pauseButton, Priority.ALWAYS);
+        HBox.setHgrow(nextLevelButton, Priority.ALWAYS);
         HBox.setHgrow(resetButton, Priority.ALWAYS);
         HBox.setHgrow(quitButton, Priority.ALWAYS);
         startButton.setMaxWidth(Double.POSITIVE_INFINITY);
         pauseButton.setMaxWidth(Double.POSITIVE_INFINITY);
+        nextLevelButton.setMaxWidth(Double.POSITIVE_INFINITY);
         resetButton.setMaxWidth(Double.POSITIVE_INFINITY);
         quitButton.setMaxWidth(Double.POSITIVE_INFINITY);
 
