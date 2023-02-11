@@ -19,6 +19,7 @@ public class SnakeGame {
     private int gameSpeed;
     private boolean isRunning;
     private boolean isGameOver;
+    private int framesPerUpdate;
 
     private final static int ROWS = 40; // rows in the mosaic
     private final static int COLUMNS = 40; 
@@ -27,6 +28,7 @@ public class SnakeGame {
     private final static Color SNAKE_COLOR = Color.GREEN;
     private final static Color SNAKE_HEAD_COLOR = Color.DARKGREEN;
     private final static Color FOOD_COLOR = Color.YELLOW;
+    private final static int MAX_LEVEL = 5;
 
     public SnakeGame(int level) {
         board = new MosaicCanvas(ROWS, COLUMNS, SQUARE_SIZE, SQUARE_SIZE);
@@ -40,7 +42,17 @@ public class SnakeGame {
         foodStuffs = new FoodStuffs(COLUMNS, ROWS);
         foodStuffs.printNodes();
 
-        gameSpeed = 8;// squares moved per second
+        //gameSpeed = 8;// squares moved per second
+        //gameSpeed = 60 + 13 * (level - 5);
+        gameSpeed = switch (level) {
+            case 1 -> 8;
+            case 2 -> 10;
+            case 3 -> 15;
+            case 4 -> 25;
+            case 5 -> 45;
+            default -> 8;
+        };
+        framesPerUpdate = MAX_LEVEL + 1 - level;
 
         setBoardColors();// must occur after creating snake
                          // and foodStuffs
@@ -50,9 +62,8 @@ public class SnakeGame {
             long frameNumber; 
 
             public void handle(long time) {
-                frameNumber++;
 
-                if (time - prevFrameTime > 0.99e9/60) {// 1 fps
+                if (time - prevFrameTime > 0.99e9/gameSpeed) {
                     updateForNewFrame();
                     prevFrameTime = time;
                 }
