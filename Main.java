@@ -105,8 +105,10 @@ public class Main extends Application {
             nextLevelButton.setDisable(true);
         });
         retryButton.setOnAction(e -> {
-            if (gameInstance.gameStatus == SnakeGame.GameStatus.LOST){
+            if (gameInstance.gameStatus == SnakeGame.GameStatus.LOST
+                && livesRemaining > 0){
                 livesRemaining--;
+                System.out.println("Lives remaining: " + livesRemaining);
                 updateLabels();
             }
             gameInstance = new SnakeGame(level, nextLevelButton);
@@ -173,6 +175,6 @@ public class Main extends Application {
 
     private void updateLabels() {
         levelLabel.setText("Level " + level);
-        livesLabel = new Label("Lives Remaining: " + livesRemaining);
+        livesLabel.setText("Lives Remaining: " + livesRemaining);
     }
 }
