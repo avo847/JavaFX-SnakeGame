@@ -14,10 +14,11 @@ public class SnakeGame {
     private FoodStuffs foodStuffs;
     private AnimationTimer animator;
 
+    private String splashScreenMessage;
+    private int level;
     private int gameSpeed;
     private boolean isRunning;
     private boolean isGameOver;
-
 
     private final static int ROWS = 40; // rows in the mosaic
     private final static int COLUMNS = 40; 
@@ -27,8 +28,9 @@ public class SnakeGame {
     private final static Color SNAKE_HEAD_COLOR = Color.DARKGREEN;
     private final static Color FOOD_COLOR = Color.YELLOW;
 
-    public SnakeGame() {
+    public SnakeGame(int level) {
         board = new MosaicCanvas(ROWS, COLUMNS, SQUARE_SIZE, SQUARE_SIZE);
+        this.level = (level > 0) ? level : 1;
         board.fill(BOARD_COLOR);
         board.setGroutingColor(null);
 
@@ -45,10 +47,12 @@ public class SnakeGame {
 
         animator = new AnimationTimer(){
             long prevFrameTime;
-        
+            long frameNumber; 
 
             public void handle(long time) {
-                if (time - prevFrameTime > 0.99e9/gameSpeed) {// 1 fps
+                frameNumber++;
+
+                if (time - prevFrameTime > 0.99e9/60) {// 1 fps
                     updateForNewFrame();
                     prevFrameTime = time;
                 }
@@ -209,6 +213,10 @@ public class SnakeGame {
         isRunning = false;
         isGameOver = true;
         System.out.println("Snake got all food. You win!");
+    }
+
+    public void setSplashScreenText() {
+
     }
 
 }

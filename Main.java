@@ -36,10 +36,18 @@ public class Main extends Application {
     private Scene scene;
     private BorderPane root;
 
+    private Button startButton;
+    private Button stopButton;
+    private Button resetButton;
+    private Button quitButton; 
+
+    private int level;
+
     public void start(Stage stage) {
 
         // set up scene:
-        gameInstance = new SnakeGame();
+        level = 1;
+        gameInstance = new SnakeGame(level);
         board = gameInstance.getBoard();
 
         HBox buttonBar = setUpButtonBar();
@@ -59,10 +67,10 @@ public class Main extends Application {
     }
 
     public HBox setUpButtonBar() {
-        Button startButton = new Button("Start");
-        Button stopButton = new Button("Stop");
-        Button resetButton = new Button("Reset");
-        Button quitButton = new Button("Quit");
+        startButton = new Button("Start");
+        stopButton = new Button("Stop");
+        resetButton = new Button("Reset");
+        quitButton = new Button("Quit");
         startButton.setOnAction(e -> {
             gameInstance.startAnimation();
             startButton.setDisable(true);
@@ -75,7 +83,7 @@ public class Main extends Application {
         });
         resetButton.setOnAction(e -> {
             gameInstance.stopAnimation();
-            gameInstance = new SnakeGame();
+            gameInstance = new SnakeGame(1);
             board = gameInstance.getBoard();
             root.setCenter(board);
             startButton.setDisable(false);// initialize in paused state
