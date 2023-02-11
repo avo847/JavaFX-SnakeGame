@@ -16,7 +16,7 @@ public class FoodStuffs {
         public FoodNode(int x, int y) {
             this.x = x;
             this.y = y;
-            value = (int) (3*Math.random())+1;
+            value = (int) (5*Math.random())+1;
         }
 
         boolean equals(FoodNode f) {
@@ -34,13 +34,21 @@ public class FoodStuffs {
     private int boardWidth;// should probably change to cols and rows
     private int boardHeight;
     private int startNumber;
+    private Snake snake; // refence to snake for checking coordinates
 
     private ArrayList<FoodNode> nodes;
 
-    public FoodStuffs(int boardWidth, int boardHeight, int startNumber) {
+    /**
+     * Create startNumber FoodNodes that randomly populate the grid. Should really say
+     * columns and rows. Reference to snake is needed to make sure there are no 
+     * overlapping coordinates (otherwise the node would disappear from the grid, 
+     * and player would have to go over it again without seeing it)
+     */
+    public FoodStuffs(int boardWidth, int boardHeight, int startNumber, Snake snake) {
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
         this.startNumber = startNumber;
+        this.snake = snake;
 
         if (startNumber < 1)
             startNumber = INIT_NUMBER;
@@ -64,7 +72,7 @@ public class FoodStuffs {
         do {
             x = (int) (boardWidth * Math.random());
             y = (int) (boardHeight * Math.random());
-        } while (nodePresent(x,y));
+        } while (nodePresent(x,y) || nodeOverlapsSnake(x,y));
 
         return new FoodNode(x,y);
     }
@@ -78,6 +86,15 @@ public class FoodStuffs {
                 return true;
         }
         return false;
+    }
+
+    private boolean nodeOverlapsSnake(int x, int y) {
+        if (snake == null) {
+            System.out.println("No snake!");
+            return false;
+        }
+
+        return snake.hasNodeAtLocation(x,y);
     }
 
     public FoodNode getFoodNode(int x, int y) {

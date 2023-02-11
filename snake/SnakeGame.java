@@ -67,7 +67,7 @@ public class SnakeGame {
 
         snake = new Snake(COLUMNS/2, ROWS/2, Snake.Direction.UP, COLUMNS, ROWS);
 
-        foodStuffs = new FoodStuffs(COLUMNS, ROWS, 5*level);
+        foodStuffs = new FoodStuffs(COLUMNS, ROWS, 5*level, snake);
 
         //gameSpeed = 8;// squares moved per second
         //gameSpeed = 60 + 13 * (level - 5);

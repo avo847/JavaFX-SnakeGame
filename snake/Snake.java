@@ -54,7 +54,7 @@ public class Snake {
     private int boardWidth, boardHeight;
 
     // static members
-    static final int START_LENGTH = 4;
+    static final int START_LENGTH = 5;
     static final int MAX_LENGTH = 100;
 
 
@@ -137,6 +137,16 @@ public class Snake {
             ys[i] = nodes.get(i).getY();
 
         return ys;
+    }
+
+    public boolean hasNodeAtLocation(int x, int y) {
+        for (SnakeNode node : nodes) {
+            if (x == node.getX() && y == node.getY()) {
+                System.out.printf("Found snake node overlapping food at (%d,%d)\n", x, y);
+                return true;
+            }
+        }
+        return false;
     }
 
     // update for new frame
