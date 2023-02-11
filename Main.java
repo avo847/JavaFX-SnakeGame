@@ -37,7 +37,7 @@ public class Main extends Application {
     private BorderPane root;
 
     private Button startButton;
-    private Button stopButton;
+    private Button pauseButton;
     private Button resetButton;
     private Button quitButton; 
 
@@ -67,19 +67,19 @@ public class Main extends Application {
     }
 
     public HBox setUpButtonBar() {
-        startButton = new Button("Start");
-        stopButton = new Button("Stop");
-        resetButton = new Button("Reset");
-        quitButton = new Button("Quit");
+        startButton = new Button("START");
+        pauseButton = new Button("PAUSE");
+        resetButton = new Button("RESET");
+        quitButton = new Button("QUIT");
         startButton.setOnAction(e -> {
             gameInstance.startAnimation();
             startButton.setDisable(true);
-            stopButton.setDisable(false);
+            pauseButton.setDisable(false);
         });
-        stopButton.setOnAction(e -> {
+        pauseButton.setOnAction(e -> {
             gameInstance.stopAnimation();
             startButton.setDisable(false);
-            stopButton.setDisable(true);
+            pauseButton.setDisable(true);
         });
         resetButton.setOnAction(e -> {
             gameInstance.stopAnimation();
@@ -87,27 +87,27 @@ public class Main extends Application {
             board = gameInstance.getBoard();
             root.setCenter(board);
             startButton.setDisable(false);// initialize in paused state
-            stopButton.setDisable(true);
+            pauseButton.setDisable(true);
         });
         quitButton.setOnAction(e -> Platform.exit());
 
         // set initial disabled
-        stopButton.setDisable(true);
+        pauseButton.setDisable(true);
 
         // set focus traversable to false
         startButton.setFocusTraversable(false);
-        stopButton.setFocusTraversable(false);
+        pauseButton.setFocusTraversable(false);
         resetButton.setFocusTraversable(false);
         quitButton.setFocusTraversable(false);
 
-        HBox buttonBar = new HBox(startButton, stopButton, resetButton, quitButton);
+        HBox buttonBar = new HBox(startButton, pauseButton, resetButton, quitButton);
 
         HBox.setHgrow(startButton, Priority.ALWAYS);
-        HBox.setHgrow(stopButton, Priority.ALWAYS);
+        HBox.setHgrow(pauseButton, Priority.ALWAYS);
         HBox.setHgrow(resetButton, Priority.ALWAYS);
         HBox.setHgrow(quitButton, Priority.ALWAYS);
         startButton.setMaxWidth(Double.POSITIVE_INFINITY);
-        stopButton.setMaxWidth(Double.POSITIVE_INFINITY);
+        pauseButton.setMaxWidth(Double.POSITIVE_INFINITY);
         resetButton.setMaxWidth(Double.POSITIVE_INFINITY);
         quitButton.setMaxWidth(Double.POSITIVE_INFINITY);
 

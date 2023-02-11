@@ -217,6 +217,7 @@ public class SnakeGame {
         if (isRunning){
             isRunning = false;
             animator.stop();
+            setPausedText();
         }
     }
 
@@ -234,17 +235,25 @@ public class SnakeGame {
         System.out.println("Snake got all food. You win!");
     }
 
-    public void setSplashScreenText() {
+    public void setScreenText(String text) {
         boardColorData = board.copyColorData();
-        splashScreenMessage = "Press START to start!";
-        splashScreenMessage += "\nLevel " + level;
 
         GraphicsContext g = board.getGraphicsContext2D();
         g.setFill(Color.BLUE);
         g.setFont(new Font(40));
         g.setTextAlign(TextAlignment.CENTER);
-        g.fillText(splashScreenMessage, 
+        g.fillText(text, 
                    board.getWidth()/2, board.getHeight()/2);
+
+    }
+    public void setSplashScreenText() {
+        splashScreenMessage = "Press START to start!";
+        splashScreenMessage += "\nLevel " + level;
+        setScreenText(splashScreenMessage);
+    }
+
+    public void setPausedText() {
+        setScreenText("Game Paused.\nPress START to continue");
     }
 
 }
