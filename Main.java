@@ -46,7 +46,7 @@ public class Main extends Application {
     public void start(Stage stage) {
 
         // set up scene:
-        level = 5;
+        level = 1;
         gameInstance = new SnakeGame(level);
         board = gameInstance.getBoard();
 

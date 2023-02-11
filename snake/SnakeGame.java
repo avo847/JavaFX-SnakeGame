@@ -3,9 +3,13 @@ package snake;
 import mosaic.MosaicCanvas;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
 public class SnakeGame {
     // fields 
@@ -20,6 +24,7 @@ public class SnakeGame {
     private boolean isRunning;
     private boolean isGameOver;
     private int framesPerUpdate;
+    private Object boardColorData;
 
     private final static int ROWS = 40; // rows in the mosaic
     private final static int COLUMNS = 40; 
@@ -56,6 +61,8 @@ public class SnakeGame {
 
         setBoardColors();// must occur after creating snake
                          // and foodStuffs
+
+        setSplashScreenText();
 
         animator = new AnimationTimer(){
             long prevFrameTime;
@@ -201,6 +208,7 @@ public class SnakeGame {
     public void startAnimation() {
         if (!isGameOver && ! isRunning) {
             isRunning = true;
+            board.restoreColorData(boardColorData);
             animator.start();
         }
     }
@@ -227,7 +235,16 @@ public class SnakeGame {
     }
 
     public void setSplashScreenText() {
+        boardColorData = board.copyColorData();
+        splashScreenMessage = "Press START to start!";
+        splashScreenMessage += "\nLevel " + level;
 
+        GraphicsContext g = board.getGraphicsContext2D();
+        g.setFill(Color.BLUE);
+        g.setFont(new Font(40));
+        g.setTextAlign(TextAlignment.CENTER);
+        g.fillText(splashScreenMessage, 
+                   board.getWidth()/2, board.getHeight()/2);
     }
 
 }
