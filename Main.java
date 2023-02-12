@@ -4,6 +4,7 @@ import snake.FoodStuffs;
 
 import mosaic.MosaicCanvas;
 
+import java.io.File;
 import java.util.List;
 import java.util.HashMap;
 
@@ -50,6 +51,8 @@ public class Main extends Application {
 
     private Label levelLabel;
     private Label livesLabel;
+
+
 
     public void start(Stage stage) {
 

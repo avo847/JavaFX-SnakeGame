@@ -2,6 +2,7 @@ package snake;
 
 import mosaic.MosaicCanvas;
 
+import java.io.File;
 import java.util.HashMap;
 
 import javafx.animation.AnimationTimer;
@@ -15,6 +16,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
+import javafx.util.Duration;
+
+
+
 public class SnakeGame {
 
     public enum GameStatus {RUNNING, PAUSED, WON, LOST};
@@ -24,6 +33,11 @@ public class SnakeGame {
     private FoodStuffs foodStuffs;
     private FoodStuffs badFoodStuffs; // level 4 and up
     private AnimationTimer animator;
+
+    private MediaPlayer musicPlayer;
+    private MediaPlayer winThemeShortPlayer;
+    private MediaPlayer winThemeLongPlayer;
+    private MediaPlayer gameOverMusicPlayer;
 
     private String splashScreenMessage;
     private int level;
@@ -35,18 +49,32 @@ public class SnakeGame {
     public GameStatus gameStatus;
     private int framesPerUpdate;
 
-    private Object boardColorData;
+    private Object boardColorData;//used for storing sqaure colors and 
+                                  //restoring when play is started. Necessary
+                                  //to "remove" on screen-text, such as from 
+                                  //splash screen and pause screen
+
+    private static final AudioClip chompSound = new AudioClip(new File("./audio/chomp.wav").toURI().toString());
+    private static final AudioClip deathSound = new AudioClip(new File("./audio/pacmandeathsound.wav").toURI().toString());
+    private static final Media music = 
+        new Media(new File("audio/music.wav").toURI().toString());
+    private static final Media winThemeShort = 
+        new Media(new File("audio/wintheme.mp3").toURI().toString());
+    private static final Media winThemeLong = 
+        new Media(new File("audio/winthemelong.mp3").toURI().toString());
+    private static final Media gameOverMusic = 
+        new Media(new File("audio/gameOverMusic.mp3").toURI().toString());
 
     private static final Image coolSnake = new Image("/images/snakeCool.png");
     private static final Image deadSnake = new Image("/images/snakeDead.png");
 
-    //private HashMap<String,Button> buttonMap;
     // same buttons defined in Main.java
     // used to enable/disable when game won or lost
     private Button startButton;
     private Button pauseButton;
     private Button nextLevelButton;
     private Button retryButton;
+
 
     private final static int ROWS = 40; // rows in the mosaic
     private final static int COLUMNS = 40; 
@@ -70,6 +98,22 @@ public class SnakeGame {
         this.pauseButton = buttonMap.get("pause");
         this.nextLevelButton = buttonMap.get("nextLevel");
         this.retryButton = buttonMap.get("retry");
+        
+        musicPlayer = new MediaPlayer(music);
+        musicPlayer.setOnEndOfMedia(new Runnable() {
+            public void run() {
+                musicPlayer.seek(new Duration(0));
+                musicPlayer.play();
+            }
+        });
+
+        winThemeShortPlayer = new MediaPlayer(winThemeShort);
+        winThemeShortPlayer.setOnEndOfMedia(new Runnable() {
+            public void run() {
+                winThemeShortPlayer.stop();
+                winThemeShortPlayer.dispose();
+            }
+        });
 
         snake = new Snake(COLUMNS/2, ROWS/2, Snake.Direction.UP, COLUMNS, ROWS);
 
@@ -81,7 +125,6 @@ public class SnakeGame {
         }
 
         //gameSpeed = 8;// squares moved per second
-        //gameSpeed = 60 + 13 * (level - 5);
         gameSpeed = switch (level) {
             case 1 -> 8;
             case 2 -> 10;
@@ -246,6 +289,7 @@ public class SnakeGame {
         // check if food is found
         FoodStuffs.FoodNode foundFood = foodStuffs.getFoodNode(newHeadX, newHeadY);
         if (foundFood != null) {
+            chompSound.play();
             snakeConsume(foundFood);
             if (foodStuffs.gotAllFood())
                 initGameWonSequence();
@@ -276,6 +320,7 @@ public class SnakeGame {
     }
 
     public void startAnimation() {
+        musicPlayer.play();
         if (!isGameOver && ! isRunning) {
             isRunning = true;
             //gameStatus = GameStatus.RUNNING;
@@ -286,6 +331,7 @@ public class SnakeGame {
     }
 
     public void stopAnimation() {
+        musicPlayer.pause();
         if (isRunning){
             isRunning = false;
             animator.stop();
@@ -295,6 +341,9 @@ public class SnakeGame {
 
     public void initGameLostSequence(int deathFlag) {
         animator.stop();
+        musicPlayer.stop();
+        deathSound.play();
+        //musicPlayer.dispose();
         startButton.setDisable(true);
         pauseButton.setDisable(true);
         isRunning = false;
@@ -305,6 +354,8 @@ public class SnakeGame {
             setDeathMessage(deathFlag);
         }else {
             setGameOverMessage(deathFlag);
+            gameOverMusicPlayer = new MediaPlayer(gameOverMusic);
+            gameOverMusicPlayer.play();
             retryButton.setText("NEW GAME");
         }
         retryButton.setDisable(false);
@@ -312,15 +363,19 @@ public class SnakeGame {
 
     public void initGameWonSequence() {
         animator.stop();
+        musicPlayer.stop();
         startButton.setDisable(true);
         pauseButton.setDisable(true);
         isRunning = false;
         isGameOver = false;
         gameStatus = GameStatus.WON;
         if (level < 5) {// still have more levels to go
+            winThemeShortPlayer.play();
             setLevelWonMessage();
             nextLevelButton.setDisable(false);
         }else {
+            winThemeLongPlayer = new MediaPlayer(winThemeLong);
+            winThemeLongPlayer.play();
             setGameWonMessage();
         }
     }
