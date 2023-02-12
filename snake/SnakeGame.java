@@ -8,6 +8,7 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -34,6 +35,9 @@ public class SnakeGame {
     private int framesPerUpdate;
 
     private Object boardColorData;
+
+    private static final Image coolSnake = new Image("/images/snakeCool.png");
+    private static final Image deadSnake = new Image("/images/snakeDead.png");
 
     //private HashMap<String,Button> buttonMap;
     // same buttons defined in Main.java
@@ -264,6 +268,7 @@ public class SnakeGame {
         isRunning = false;
         isGameOver = true;
         gameStatus = GameStatus.LOST;
+        drawDeadSnake();
         if (livesRemaining > 0) {
             setDeathMessage();
         }else {
@@ -301,7 +306,10 @@ public class SnakeGame {
 
 
     public void setSplashScreenText() {
-        splashScreenMessage = "Click START or Press SPACE to start!";
+        drawCoolSnake();
+        splashScreenMessage = "Collect all Yellow food to win";
+        splashScreenMessage += "\nUse arrow keys to turn";
+        splashScreenMessage += "\nClick START or Press SPACE to start!";
         splashScreenMessage += "\nLevel " + level;
         splashScreenMessage += "\nBeat all 5 levels to win!";
         setScreenText(splashScreenMessage);
@@ -336,12 +344,23 @@ public class SnakeGame {
     public void setGameOverMessage() {
         String text = "Snake has died from eating itself.";
         text += "\nNo lives remaining";
-        text += "\nGame Over";
+        text += "\nGAME OVER";
+        text += "\nPress NEW GAME to start again.";
         setScreenText(text);
     }
 
     public void setGameStatus(GameStatus status) {
         gameStatus = status;
+    }
+
+    public void drawCoolSnake() {
+        GraphicsContext g = board.getGraphicsContext2D();
+        g.drawImage(coolSnake, 0.35*board.getWidth(), 0, 0.4*411, 0.4*564);
+    }
+
+    private void drawDeadSnake() {
+        GraphicsContext g = board.getGraphicsContext2D();
+        g.drawImage(deadSnake, 0.25*board.getWidth(), -50);
     }
 
 }
