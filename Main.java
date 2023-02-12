@@ -15,14 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.RadioMenuItem;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -132,7 +124,6 @@ public class Main extends Application {
             nextLevelButton.setDisable(true);
         });
         retryButton.setOnAction(e -> {
-            System.out.println("Retrying from " + livesRemaining + " lives");
             if (livesRemaining > 0){
                 livesRemaining--;
             } else {// start from level 1

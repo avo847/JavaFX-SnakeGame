@@ -142,7 +142,6 @@ public class Snake {
     public boolean hasNodeAtLocation(int x, int y) {
         for (SnakeNode node : nodes) {
             if (x == node.getX() && y == node.getY()) {
-                System.out.printf("Found snake node overlapping food at (%d,%d)\n", x, y);
                 return true;
             }
         }
@@ -173,7 +172,6 @@ public class Snake {
                         setSnakeDirection(Direction.LEFT);
                     else
                         setSnakeDirection(turnNinetyDegreesAtRandom(leadingDirection));
-                    System.out.println("Changed direction from up");
                 }
             }
             case DOWN -> {
@@ -184,7 +182,6 @@ public class Snake {
                         setSnakeDirection(Direction.LEFT);
                     else
                         setSnakeDirection(turnNinetyDegreesAtRandom(leadingDirection));
-                    System.out.println("Changed direction from down");
                 }
             }
             case LEFT -> {
@@ -195,7 +192,6 @@ public class Snake {
                         setSnakeDirection(Direction.UP);
                     else
                         setSnakeDirection(turnNinetyDegreesAtRandom(leadingDirection));
-                    System.out.println("Changed direction from left");
                 }
             }
             case RIGHT -> {
@@ -206,7 +202,6 @@ public class Snake {
                         setSnakeDirection(Direction.UP);
                     else
                         setSnakeDirection(turnNinetyDegreesAtRandom(leadingDirection));//turn up or down
-                    System.out.println("Changed direction from right");
                 }
             }
         }
