@@ -22,6 +22,7 @@ public class SnakeGame {
     private MosaicCanvas board;
     private Snake snake;
     private FoodStuffs foodStuffs;
+    private FoodStuffs badFoodStuffs; // level 4 and up
     private AnimationTimer animator;
 
     private String splashScreenMessage;
@@ -54,6 +55,7 @@ public class SnakeGame {
     private final static Color SNAKE_COLOR = Color.GREEN;
     private final static Color SNAKE_HEAD_COLOR = Color.DARKGREEN;
     private final static Color FOOD_COLOR = Color.YELLOW;
+    private final static Color BAD_FOOD_COLOR = Color.RED;
     private final static int MAX_LEVEL = 5;
 
     public SnakeGame(int level, int lives, HashMap<String,Button> buttonMap) {
@@ -73,15 +75,20 @@ public class SnakeGame {
 
         foodStuffs = new FoodStuffs(COLUMNS, ROWS, 5*level, snake, null);
 
+        if (level >= 3) {
+            badFoodStuffs = new FoodStuffs(COLUMNS, ROWS, 3*(level-2), 
+                                    snake, foodStuffs);
+        }
+
         //gameSpeed = 8;// squares moved per second
         //gameSpeed = 60 + 13 * (level - 5);
         gameSpeed = switch (level) {
             case 1 -> 8;
             case 2 -> 10;
             case 3 -> 15;
-            case 4 -> 25;
-            case 5 -> 45;
-            default -> 60;
+            case 4 -> 20;
+            case 5 -> 20;
+            default -> 20;
         };
         framesPerUpdate = MAX_LEVEL + 1 - level;
 
@@ -117,6 +124,8 @@ public class SnakeGame {
 
         // set food colors
         setFoodColors();
+        if (badFoodStuffs != null)
+            setBadFoodColors();
 
         // set snake colors
         int[] xs = snake.getXdirections();
@@ -139,6 +148,18 @@ public class SnakeGame {
             g.setFill(Color.BLACK);
             g.fillText(num, node.x*SQUARE_SIZE + SQUARE_SIZE*0.5, node.y*SQUARE_SIZE+SQUARE_SIZE*0.8); 
         }
+    }
+
+    public void setBadFoodColors() {
+        if (badFoodStuffs == null)
+            return;
+        GraphicsContext g = board.getGraphicsContext2D();
+        g.setFont(new Font(15));
+        g.setTextAlign(TextAlignment.CENTER);
+        for (FoodStuffs.FoodNode node : badFoodStuffs.getFoodList()) {
+            board.setColor(node.y, node.x, BAD_FOOD_COLOR);
+        }
+    
     }
 
     public void keyHandle(KeyEvent evt) {
@@ -219,14 +240,25 @@ public class SnakeGame {
         snake.updatePosForNewFrame();// update snake position
         
         Snake.SnakeNode newHead = snake.getHead();
+        int newHeadX = newHead.getX();
+        int newHeadY = newHead.getY();
         
         // check if food is found
-        FoodStuffs.FoodNode foundFood = foodStuffs.getFoodNode(newHead.getX(), newHead.getY());
+        FoodStuffs.FoodNode foundFood = foodStuffs.getFoodNode(newHeadX, newHeadY);
         if (foundFood != null) {
             snakeConsume(foundFood);
             if (foodStuffs.gotAllFood())
                 initGameWonSequence();
         }
+
+        //check if bad food hit
+        if (badFoodStuffs != null) {
+            FoodStuffs.FoodNode foundBadFood = badFoodStuffs.getFoodNode(newHeadX, newHeadY);
+            if (foundBadFood != null) {
+                initGameLostSequence(2);
+            }
+        }
+
         // update board visuals
         board.setColor(newHead.getY(), newHead.getX(), SNAKE_HEAD_COLOR);
         board.setColor(oldHeadY, oldHeadX, SNAKE_COLOR); // snake body color
@@ -234,7 +266,7 @@ public class SnakeGame {
         
         // check if run into self
         if (snake.hasRunIntoSelf())
-            initGameLostSequence();// end the game
+            initGameLostSequence(1);// end the game
     }
 
     public void snakeConsume(FoodStuffs.FoodNode f) {
@@ -261,7 +293,7 @@ public class SnakeGame {
         }
     }
 
-    public void initGameLostSequence() {
+    public void initGameLostSequence(int deathFlag) {
         animator.stop();
         startButton.setDisable(true);
         pauseButton.setDisable(true);
@@ -270,9 +302,9 @@ public class SnakeGame {
         gameStatus = GameStatus.LOST;
         drawDeadSnake();
         if (livesRemaining > 0) {
-            setDeathMessage();
+            setDeathMessage(deathFlag);
         }else {
-            setGameOverMessage();
+            setGameOverMessage(deathFlag);
             retryButton.setText("NEW GAME");
         }
         retryButton.setDisable(false);
@@ -308,6 +340,8 @@ public class SnakeGame {
     public void setSplashScreenText() {
         drawCoolSnake();
         splashScreenMessage = "Collect all Yellow food to win";
+        if (badFoodStuffs != null)
+            splashScreenMessage += "\nAvoid the RED poison!";
         splashScreenMessage += "\nUse arrow keys to turn";
         splashScreenMessage += "\nClick START or Press SPACE to start!";
         splashScreenMessage += "\nLevel " + level;
@@ -320,8 +354,13 @@ public class SnakeGame {
          
     }
 
-    public void setDeathMessage() {
-        String text = "Snake has died from eating itself";
+    public void setDeathMessage(int deathFlag) {
+        String text = "";
+        if (deathFlag == 1){ // snake died from eating itself
+            text += "Snake has died from eating itself";
+        } else if (deathFlag == 2) { // snake died from poison
+            text += "Snake has died from eating poison";
+        }
         text += "\nSorry, you lose.";
         text += "\nPress RETRY to try this level again.";
         setScreenText(text);
@@ -341,8 +380,13 @@ public class SnakeGame {
         setScreenText(text);
     }
 
-    public void setGameOverMessage() {
-        String text = "Snake has died from eating itself.";
+    public void setGameOverMessage(int deathFlag) {
+        String text = "";
+        if (deathFlag == 1){ // snake died from eating itself
+            text += "Snake has died from eating itself";
+        } else if (deathFlag == 2) { // snake died from poison
+            text += "Snake has died from eating poison";
+        }
         text += "\nNo lives remaining";
         text += "\nGAME OVER";
         text += "\nPress NEW GAME to start again.";

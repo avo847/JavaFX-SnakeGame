@@ -35,6 +35,10 @@ public class FoodStuffs {
     private int boardHeight;
     private int startNumber;
     private Snake snake; // refence to snake for checking coordinates
+    private FoodStuffs otherFoodStuffs; // reference to existing foodstuffs
+                                        // as this class will represent both
+                                        // good and bad food, there might be
+                                        // up to two instances present at once.
 
     private ArrayList<FoodNode> nodes;
 
@@ -50,6 +54,7 @@ public class FoodStuffs {
         this.boardHeight = boardHeight;
         this.startNumber = startNumber;
         this.snake = snake;
+        this.otherFoodStuffs = otherFoodStuffs;
 
         if (startNumber < 1)
             startNumber = INIT_NUMBER;
@@ -70,15 +75,18 @@ public class FoodStuffs {
      */
     private FoodNode newRandomNode() {
         int x, y; 
+        boolean nodeExists;
         do {
             x = (int) (boardWidth * Math.random());
             y = (int) (boardHeight * Math.random());
-        } while (nodePresent(x,y) || nodeOverlapsSnake(x,y));
-
+            nodeExists = nodePresent(x,y) || nodeOverlapsSnake(x,y);
+            if(otherFoodStuffs != null) //also check if it exists there
+                nodeExists = nodeExists || otherFoodStuffs.nodePresent(x,y);
+        } while (nodeExists);
         return new FoodNode(x,y);
     }
 
-    private boolean nodePresent(int x, int y) {
+    public boolean nodePresent(int x, int y) {
         if (nodes == null) // no nodes yet
             return false;
 
