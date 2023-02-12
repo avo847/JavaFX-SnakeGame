@@ -44,7 +44,8 @@ public class FoodStuffs {
      * overlapping coordinates (otherwise the node would disappear from the grid, 
      * and player would have to go over it again without seeing it)
      */
-    public FoodStuffs(int boardWidth, int boardHeight, int startNumber, Snake snake) {
+    public FoodStuffs(int boardWidth, int boardHeight, int startNumber, Snake snake, 
+                        FoodStuffs otherFoodStuffs) {
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
         this.startNumber = startNumber;
