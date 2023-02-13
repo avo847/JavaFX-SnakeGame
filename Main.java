@@ -33,6 +33,7 @@ public class Main extends Application {
     }
 
     // fields
+    private String documentBase;
     private SnakeGame gameInstance;
     private MosaicCanvas board;
     private Scene scene;
@@ -56,6 +57,9 @@ public class Main extends Application {
 
     public void start(Stage stage) {
 
+        documentBase = getHostServices().getDocumentBase();
+        System.out.print("document base: ");
+        System.out.println(documentBase);
         HBox buttonBar = setUpButtonBar();
         buttonMap = new HashMap<String, Button>();
         buttonMap.put("start", startButton);

@@ -3,8 +3,10 @@ package snake;
 import mosaic.MosaicCanvas;
 
 import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 
+import javafx.application.Application;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -54,8 +56,11 @@ public class SnakeGame {
                                   //to "remove" on screen-text, such as from 
                                   //splash screen and pause screen
 
-    private static final AudioClip chompSound = new AudioClip(new File("./audio/chomp.wav").toURI().toString());
-    private static final AudioClip deathSound = new AudioClip(new File("./audio/pacmandeathsound.wav").toURI().toString());
+    //private static final AudioClip chompSound = new AudioClip(new File("./audio/chomp.wav").toURI().toURL().toString());
+    //private static final AudioClip deathSound = new AudioClip(new File("./audio/pacmandeathsound.wav").toURI().toString());
+    private static final AudioClip chompSound = new AudioClip(SnakeGame.class.getResource("resources/audio/chomp.wav").toString());
+    private static final AudioClip deathSound = new AudioClip(SnakeGame.class.getResource("resources/audio/pacmandeathsound.wav").toString());
+    /*
     private static final Media music = 
         new Media(new File("audio/music.wav").toURI().toString());
     private static final Media winThemeShort = 
@@ -64,10 +69,32 @@ public class SnakeGame {
         new Media(new File("audio/winthemelong.mp3").toURI().toString());
     private static final Media gameOverMusic = 
         new Media(new File("audio/gameOverMusic.mp3").toURI().toString());
+    */
+    private static final Media music = 
+        new Media(SnakeGame.class.getResource("resources/audio/music.wav").toString());
+    private static final Media music3 = 
+        new Media(SnakeGame.class.getResource("resources/audio/music3.mp3").toString());
+    private static final Media music4 = 
+        new Media(SnakeGame.class.getResource("resources/audio/music4.mp3").toString());
+    private static final Media music5 = 
+        new Media(SnakeGame.class.getResource("resources/audio/music5.mp3").toString());
+    private static final Media winThemeShort = 
+        new Media(SnakeGame.class.getResource("resources/audio/wintheme.mp3").toString());
+    private static final Media winThemeLong = 
+        new Media(SnakeGame.class.getResource("resources/audio/winthemelong.mp3").toString());
+    private static final Media gameOverMusic = 
+        new Media(SnakeGame.class.getResource("resources/audio/gameovermusic.mp3").toString());
 
-    private static final Image coolSnake = new Image("/images/snakeCool.png");
-    private static final Image deadSnake = new Image("/images/snakeDead.png");
-
+    /*
+    private static final Image coolSnake = new Image("./images/snakeCool.png");
+    private static final Image deadSnake = new Image("./images/snakeDead.png");
+    */
+    /*
+    private static final Image coolSnake = new Image(new File("./images/snakeCool.png").toURI().toString());
+    private static final Image deadSnake = new Image(new File("./images/snakeDead.png").toURI().toString());
+    */
+    private static final Image coolSnake = new Image(SnakeGame.class.getResource("resources/images/snakecool.png").toString());
+    private static final Image deadSnake = new Image(SnakeGame.class.getResource("resources/images/snakedead.png").toString());
     // same buttons defined in Main.java
     // used to enable/disable when game won or lost
     private Button startButton;
@@ -98,8 +125,17 @@ public class SnakeGame {
         this.pauseButton = buttonMap.get("pause");
         this.nextLevelButton = buttonMap.get("nextLevel");
         this.retryButton = buttonMap.get("retry");
-        
-        musicPlayer = new MediaPlayer(music);
+
+        // set music
+        if (level == 5) 
+            musicPlayer = new MediaPlayer(music5);
+        else if (level == 4)
+            musicPlayer = new MediaPlayer(music4);
+        else if (level == 3)
+            musicPlayer = new MediaPlayer(music3);
+        else
+            musicPlayer = new MediaPlayer(music);
+
         musicPlayer.setOnEndOfMedia(new Runnable() {
             public void run() {
                 musicPlayer.seek(new Duration(0));
